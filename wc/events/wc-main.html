@@ -1,0 +1,91 @@
+<link rel="import" href="wc-child.html" async>
+
+<template id="wc-main-template">
+  <style>
+    .main {
+      outline: 1px solid blue;
+    }
+  </style>
+
+  <div class="main">
+    <p>Before</p>
+    <ul>
+      <li>
+        <slot name="foo">default foo</slot>
+      </li>
+      <li>
+        <slot name="bar">default bar</slot>
+      </li>
+    </ul>
+    <p>After</p>
+    <hr>
+    <wc-child></wc-child>
+  </div>
+</template>
+
+<script>
+  'use strict';
+
+  window.customElements.define('wc-main', class WCMain extends HTMLElement {
+    constructor() {
+      super()
+
+      this._shadowRoot = this.attachShadow({mode: 'closed'})
+      const doc = document.currentScript.ownerDocument
+      const template = doc.querySelector('#wc-main-template')
+      const instance = template.content.cloneNode(true)
+      this._shadowRoot.appendChild(instance)
+
+      this.logSlots()
+
+      this.bound = {
+        onClick: this.onClick.bind(this)
+      }
+    }
+
+    onClick() {
+      console.info('BEGIN WC-CLICK (main)')
+      this.dispatchEvent(new CustomEvent('wc-click', {
+        bubbles: true,
+        composed: true,
+        detail: 'main',
+      }))
+      console.info('BEGIN WC-CLICK (main)')
+    }
+
+    connectedCallback() {
+      this.addEventListener('click', this.bound.onClick)
+
+      this.addEventListener('wc-click', function(e) {
+        console.log('> main:capture', e.detail)
+      }, {
+        capture: true,
+        passive: true,
+      })
+
+      this.addEventListener('wc-click', function(e) {
+        console.log('> main:bubble', e.detail)
+      }, {
+        capture: false,
+        passive: true,
+      })
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('click', onClick)
+    }
+
+    logSlots() {
+      // Default slot
+      let slotDefault = this._shadowRoot.querySelector('slot:not([name])')
+      if (!slotDefault) slotDefault = this._shadowRoot.querySelector('slot')
+      console.log('wc-main default', slotDefault.assignedNodes())
+
+      // Named slots
+      for (let slot of this._shadowRoot.querySelectorAll('slot[name]')) {
+        const name = slot.name;
+        console.log(`wc-main::${name}`, slot.assignedNodes())
+      }
+    }
+  });
+</script>

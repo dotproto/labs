@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="import" href="wc-main.html">
+</head>
+<body>
+  <wc-main>
+    <div slot="foo">first</div>
+    <div slot="bar">second</div>
+  </wc-main>
+  <h2>Notes</h2>
+  <ul>
+    <li>
+      <p>I ran into an issue where a WC imported by another WC would reference the wrong <code>document.currentScript.ownerDocument</code>. If component Foo included component Bar, then Bar's <code>document.currentScript.ownerDocument</code> would point to Foo's script, not Bar's script. To get around this problem, I had to set nexted <code>&lt;link rel="import"&gt;</code> tags to <code>async</code>. Setting nested links to <code>defer</code> did not address the problem.</p>
+    </li>
+  </ul>
+
+  <script>
+    window.addEventListener('click', e => {
+      console.info('BEGIN WC-CLICK (window)')
+      this.dispatchEvent(new CustomEvent('wc-click', {
+        bubbles: true,
+        composed: true,
+        detail: 'window',
+      }))
+      console.info('END WC-CLICK (window)')
+    })
+
+    window.addEventListener('wc-click', e => console.log('window:capture', e.detail), {
+      capture: true,
+      passive: true,
+    })
+
+    window.addEventListener('wc-click', e => console.log('window:bubble', e.detail), {
+      capture: false,
+      passive: true,
+    })
+  </script>
+</body>
+</html>

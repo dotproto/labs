@@ -1,0 +1,66 @@
+<link rel="import" href="wc-grandchild.html" async>
+
+<template id="wc-child-template">
+  <style>
+    .child {
+      outline: 1px solid red;
+    }
+  </style>
+
+  <div class="child">
+    <p>WC-CHILD</p>
+    <wc-grandchild></wc-grandchild>
+  </div>
+</template>
+
+<script>
+  'use strict';
+
+  window.customElements.define('wc-child', class WCChild extends HTMLElement {
+    constructor() {
+      super()
+
+      this._shadowRoot = this.attachShadow({mode: 'closed'})
+      const doc = document.currentScript.ownerDocument
+      const template = doc.querySelector('#wc-child-template')
+      const instance = template.content.cloneNode(true)
+      this._shadowRoot.appendChild(instance)
+
+      this.bound = {
+        onClick: this.onClick.bind(this)
+      }
+    }
+
+    onClick() {
+      console.info('BEGIN WC-CLICK (child)')
+      this.dispatchEvent(new CustomEvent('wc-click', {
+        bubbles: true,
+        composed: true,
+        detail: 'child',
+      }))
+      console.info('END WC-CLICK (child)')
+    }
+
+    connectedCallback() {
+      this.addEventListener('click', this.bound.onClick)
+
+      this.addEventListener('wc-click', function(e) {
+        console.log('>> child:capture', e.detail)
+      }, {
+        capture: true,
+        passive: true,
+      })
+
+      this.addEventListener('wc-click', function(e) {
+        console.log('>> child:bubble', e.detail)
+      }, {
+        capture: false,
+        passive: true,
+      })
+    }
+
+    disconnectedCallback() {
+      this.removeEventListener('click', onClick)
+    }
+  })
+</script>

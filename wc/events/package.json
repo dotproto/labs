@@ -1,0 +1,17 @@
+{
+  "name": "wc-events",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Simple demo illustrating how events propagate in a web component",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Simoen Vincent <svincent@gmail.com> (https://svincent.me)",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^0.9.0"
+  }
+}
