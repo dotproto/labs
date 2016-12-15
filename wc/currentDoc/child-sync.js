@@ -2,7 +2,7 @@
 (function() {
   'use strict';
 
-  class ImportedChild extends HTMLElement {
+  class ChildSync extends HTMLElement {
     constructor() {
       super();
 
@@ -29,5 +29,5 @@
     }
   }
 
-  window.customElements.define('child-sync', ImportedChild);
+  window.customElements.define('child-sync', ChildSync);
 })();

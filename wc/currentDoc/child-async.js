@@ -2,7 +2,7 @@
 (function() {
   'use strict';
 
-  class ImportedChild extends HTMLElement {
+  class ChildAsync extends HTMLElement {
     constructor() {
       super();
 
@@ -29,5 +29,5 @@
     }
   }
 
-  window.customElements.define('child-async', ImportedChild);
+  window.customElements.define('child-async', ChildAsync);
 })();
